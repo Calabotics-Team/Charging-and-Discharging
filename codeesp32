@@ -1,0 +1,49 @@
+
+#define pinoControle 4  // Pino que comanda a carga (digital)
+#define pinoLeitura 32  // Pino que lê o valor para plotagem
+#define periodo 20 // Período em milisegundos da saida digital
+int leitura;
+void setup() {
+  Serial.begin(115200);
+  pinMode(pinoControle, OUTPUT);
+  pinMode(2, INPUT);
+  pinMode(12, OUTPUT);
+  
+}
+
+void loop() {
+
+  // Carga
+  digitalWrite(pinoControle, HIGH); // Liga os 5V para carregar
+  Serial.println(digitalRead(12));
+  leitura = digitalRead(12);
+  digitalWrite(11, leitura);
+  // Registra a carga por 4 segundos
+  for (int i = 0; i < 25; i++) { 
+    plotarDados();
+    delay(periodo); 
+  }
+
+  // Descarga
+  digitalWrite(pinoControle, LOW);  // Desliga o GND para descarregar
+  Serial.println(digitalRead(12));
+  leitura = digitalRead(12);
+  digitalWrite(11, leitura);
+  // Registra a descarga por 4 segundos
+  for (int i = 0; i < 25; i++) { 
+    plotarDados();
+    delay(periodo); 
+  }
+}
+
+// Plotar com os limites travados
+void plotarDados() {
+  int tensao = analogRead(pinoLeitura);
+
+  // Truque clássico do "Internet e Coisas" adaptado ao experimento:
+  Serial.print(0);                // Linha inferior fixa (0V)
+  Serial.print(",");
+  Serial.print(1023);             // Linha superior fixa (5V)
+  Serial.print(",");
+  Serial.println(tensao); // Plota a curva carga/descarga
+}
