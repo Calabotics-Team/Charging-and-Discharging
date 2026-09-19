@@ -37,7 +37,7 @@ void loop() {
 
 // Plotar com os limites travados
 void plotarDados() {
-  int tensao = analogRead(pinoLeitura);
+  int tensao = analogRead(pinoLeituraAnalogica);
 
   // Truque clássico do "Internet e Coisas" adaptado ao experimento:
   Serial.print(0);                // Linha inferior fixa (0V)
