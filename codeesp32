@@ -15,9 +15,9 @@ void loop() {
 
   // Carga
   digitalWrite(pinoControle, HIGH); // Liga os 5V para carregar
-  Serial.println(digitalRead(2));
-  leitura = digitalRead(2);
-  digitalWrite(12, leitura);
+  Serial.println(digitalRead(18));
+  leitura = digitalRead(18);
+  digitalWrite(5, leitura);
   // Registra a carga por 4 segundos
   for (int i = 0; i < 25; i++) { 
     plotarDados();
@@ -26,9 +26,9 @@ void loop() {
 
   // Descarga
   digitalWrite(pinoControle, LOW);  // Desliga o GND para descarregar
-  Serial.println(digitalRead(2));
-  leitura = digitalRead(2);
-  digitalWrite(12, leitura);
+  Serial.println(digitalRead(18));
+  leitura = digitalRead(18);
+  digitalWrite(5, leitura);
   // Registra a descarga por 4 segundos
   for (int i = 0; i < 25; i++) { 
     plotarDados();
