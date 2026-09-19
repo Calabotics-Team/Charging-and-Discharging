@@ -1,36 +1,35 @@
 
 #define pinoControle 19 // Pino que comanda a carga (digital)
-#define pinoLeitura 32  // Pino que lê o valor para plotagem
+#define pinoLeituraAnalogica 32  // Pino que lê o valor para plotagem
+#define pinoLED 21 // Pino que controla o LED
+#define pinoLeituraDigital 18 // Pino que lê o valor digital do capacitor para o LED
 #define periodo 20 // Período em milisegundos da saida digital
+#define frequencia 2 // Frequência
 int leitura;
-void setup() {
+
+void setup() { 
   Serial.begin(115200);
   pinMode(pinoControle, OUTPUT);
-  pinMode(18, INPUT);
-  pinMode(5, OUTPUT);
-  
+  pinMode(pinoLeituraDigital, INPUT);
+  pinMode(pinoLED, OUTPUT);
 }
 
 void loop() {
 
   // Carga
   digitalWrite(pinoControle, HIGH); // Liga os 5V para carregar
-  Serial.println(digitalRead(18));
-  leitura = digitalRead(18);
-  digitalWrite(5, leitura);
-  // Registra a carga por 4 segundos
-  for (int i = 0; i < 25; i++) { 
+  leitura = digitalRead(pinoLeituraDigital);
+  digitalWrite(pinoLED, leitura);
+  for (int i = 0; i < frequencia; i++) { 
     plotarDados();
     delay(periodo); 
   }
 
   // Descarga
   digitalWrite(pinoControle, LOW);  // Desliga o GND para descarregar
-  Serial.println(digitalRead(18));
-  leitura = digitalRead(18);
-  digitalWrite(5, leitura);
-  // Registra a descarga por 4 segundos
-  for (int i = 0; i < 25; i++) { 
+  leitura = digitalRead(pinoLeituraDigital);
+  digitalWrite(pinoLED, leitura);
+  for (int i = 0; i < frequencia; i++) { 
     plotarDados();
     delay(periodo); 
   }
@@ -43,7 +42,7 @@ void plotarDados() {
   // Truque clássico do "Internet e Coisas" adaptado ao experimento:
   Serial.print(0);                // Linha inferior fixa (0V)
   Serial.print(",");
-  Serial.print(1023);             // Linha superior fixa (5V)
+  Serial.print(4095);             // Linha superior fixa (3,3V)
   Serial.print(",");
-  Serial.println(tensao); // Plota a curva carga/descarga
+  Serial.println(tensao);         // Plota a curva carga/descarga
 }
