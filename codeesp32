@@ -1,13 +1,13 @@
 
-#define pinoControle 4  // Pino que comanda a carga (digital)
+#define pinoControle 19 // Pino que comanda a carga (digital)
 #define pinoLeitura 32  // Pino que lê o valor para plotagem
 #define periodo 20 // Período em milisegundos da saida digital
 int leitura;
 void setup() {
   Serial.begin(115200);
   pinMode(pinoControle, OUTPUT);
-  pinMode(2, INPUT);
-  pinMode(12, OUTPUT);
+  pinMode(18, INPUT);
+  pinMode(5, OUTPUT);
   
 }
 
