@@ -1,48 +1,49 @@
-
 #define pinoControle 19 // Pino que comanda a carga (digital)
 #define pinoLeituraAnalogica 32  // Pino que lê o valor para plotagem
 #define pinoLED 21 // Pino que controla o LED
 #define pinoLeituraDigital 18 // Pino que lê o valor digital do capacitor para o LED
 #define periodo 20 // Período em milisegundos da saida digital
-#define frequencia 2 // Frequência
-int leitura;
+#define frequencia 2 // Frequência (pode ser alterada)
+int leitura; // Guarda o último estado digital lido (HIGH ou LOW)
 
 void setup() { 
-  Serial.begin(115200);
-  pinMode(pinoControle, OUTPUT);
-  pinMode(pinoLeituraDigital, INPUT);
-  pinMode(pinoLED, OUTPUT);
+  Serial.begin(115200); // Inicia a serial em alta velocidade para o plotter
+  pinMode(pinoControle, OUTPUT); // Pino que alimenta/descarrega o capacitor
+  pinMode(pinoLeituraDigital, INPUT); // Pino que lê saída do capacitor em formato digital
+  pinMode(pinoLED, OUTPUT); // Pino que acende/apaga o LED
+  pinMode(pinoLeituraAnalogica, INPUT);// Pino que lê saída do capacitor em formato analógico
 }
 
 void loop() {
 
   // Carga
-  digitalWrite(pinoControle, HIGH); // Liga os 5V para carregar
-  leitura = digitalRead(pinoLeituraDigital);
-  digitalWrite(pinoLED, leitura);
-  for (int i = 0; i < frequencia; i++) { 
-    plotarDados();
-    delay(periodo); 
+  digitalWrite(pinoControle, HIGH); // Liga os 3,3V para carregar
+  leitura = digitalRead(pinoLeituraDigital); // Lê se a tensão do capacitor já é considerada nível alto
+  digitalWrite(pinoLED, leitura); // O LED espelha o estado lido do capacitor
+  for (int i = 0; i < frequencia; i++) { // Repete a amostragem conforme o valor de "frequencia"
+    plotarDados(); // Envia uma amostra para o plotter serial
+    delay(periodo); // Espera o tempo do semiciclo antes da próxima amostra
   }
 
   // Descarga
   digitalWrite(pinoControle, LOW);  // Desliga o GND para descarregar
-  leitura = digitalRead(pinoLeituraDigital);
-  digitalWrite(pinoLED, leitura);
-  for (int i = 0; i < frequencia; i++) { 
-    plotarDados();
-    delay(periodo); 
+  leitura = digitalRead(pinoLeituraDigital); // Lê novamente o estado digital do capacitor
+  digitalWrite(pinoLED, leitura); // Atualiza o LED com esse estado
+  for (int i = 0; i < frequencia; i++) { // Repete a amostragem durante a descarga
+    plotarDados(); // Envia uma amostra para o plotter serial
+    delay(periodo); // Espera o tempo do semiciclo antes da próxima amostra
   }
 }
 
 // Plotar com os limites travados
 void plotarDados() {
-  int tensao = analogRead(pinoLeituraAnalogica);
+  // Lê a tensão do capacitor (0 a 4095 no ADC de 12 bits do ESP32)
+  int tensao = analogRead(pinoLeituraAnalogica); 
 
   // Truque clássico do "Internet e Coisas" adaptado ao experimento:
   Serial.print(0);                // Linha inferior fixa (0V)
-  Serial.print(",");
+  Serial.print(",");              // Separador entre os valores do plotter
   Serial.print(4095);             // Linha superior fixa (3,3V)
-  Serial.print(",");
+  Serial.print(",");              // Separador entre os valores do plotter
   Serial.println(tensao);         // Plota a curva carga/descarga
 }
